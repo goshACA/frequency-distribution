@@ -10,51 +10,112 @@ var newMarker;
 L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=dcQ5cdX7CXVu82p2BXzD').addTo(map);
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 map.addControl(sidebar);
+var toggle = L.easyButton({
+  states: [{
+    stateName: 'add-markers',
+    icon: 'fa-map-marker',
+    title: 'add random markers',
+    onClick: function(control) {
+      sidebar.close();
+      showFrequencies();
+      control.state('remove-markers');
+    }
+  }, {
+    icon: 'fa-undo',
+    stateName: 'remove-markers',
+    onClick: function(control) {
+      hidePopup();
+      control.state('add-markers');
+    },
+    title: 'remove markers'
+  }]
+});
+toggle.addTo(map);
+L.easyButton('&#x00023', function() {
+  calculateDist();
+}).addTo(map);
+
 
 map.on('click', function(e) {
-  addMarker(e);
+  showForm(e);
 });
 
 function addMarker(e) {
   sidebar.close();
-  newMarker = new L.marker(e.latlng).on('click', showForm).addTo(map);
+  hidePopup();
+  newMarker = new L.marker(e.latlng, {
+    contextmenu: true,
+    contextmenuItems: [{
+      text: 'Circle 1',
+      callback: function() {
+        alert("tctc");
+      }
+    }]
+  }).on('click', showForm).addTo(map);
+}
+
+function addPopup(antenna) {
+  antenna.popup = L.popup()
+    .setLatLng([antenna.lat, antenna.lng])
+    .setContent(`<div class="wrap">
+	 <form class="main-form" action="">
+	 <div class="form-group"> Assigned Frequencie:\n${antenna.frequencies.toString()} </div>
+	</form>
+	</div>`)
+    .addTo(map)
+    .openOn(map);
 }
 
 
 function showForm(e) {
+  sidebar.close();
+  hidePopup();
   var antenna = antennas.find(o => o.lat.toFixed(coordPrecision) == e.latlng.lat.toFixed(coordPrecision) && o.lng.toFixed(coordPrecision) == e.latlng.lng.toFixed(coordPrecision));
   if (!(typeof antenna === 'undefined')) {
+    sidebar.open('home');
     currentAntennaId = antennas.indexOf(antenna);
     fill(antenna);
   } else {
     var antenna = new Antenna(e.latlng);
-    antenna.marker = newMarker;
-    antennas.push(new Antenna(e.latlng));
     document.getElementById("value-lat").textContent = e.latlng.lat.toFixed(coordPrecision);
     document.getElementById("value-lon").textContent = e.latlng.lng.toFixed(coordPrecision);
-    document.getElementById("input-rad").value = '';
-    document.getElementById("input-freq").value = '';
-    document.getElementById("input-type").value = '';
     currentAntennaId = antennas.length - 1;
+    antenna.marker = new L.marker(e.latlng, {
+      contextmenu: true,
+      contextmenuItems: [{
+        text: 'Circle 1',
+        callback: function() {
+          alert("tctc");
+        }
+      }]
+    }).on('click', showForm).addTo(map);
+    antennas.push(antenna);
   }
-  sidebar.open('home');
 }
 
 function fill(antenna) {
   document.getElementById("value-lat").textContent = antenna.lat;
   document.getElementById("value-lon").textContent = antenna.lng;
-  document.getElementById("input-type").value = antenna.type;
-  document.getElementById("input-freq").value = antenna.freq_num;
+  if (antenna.type != '')
+    document.getElementById("input-type").value = antenna.type;
+  if (antenna.freq_num != '')
+    document.getElementById("input-freq").value = antenna.freq_num;
   document.getElementById("input-rad").value = antenna.radius;
+}
+
+function checkInputFields() {
+  //TODO: check if input fields are empty
 }
 
 function read() {
   antennas[currentAntennaId].type = document.getElementById("input-type").value;
   antennas[currentAntennaId].freq_num = parseInt(document.getElementById("input-freq").value, 10);
-  if(antennas[currentAntennaId].circle != null){
+  if (antennas[currentAntennaId].circle != null) {
     removePrevCoverage(antennas[currentAntennaId]);
   }
-  antennas[currentAntennaId].radius = parseInt(document.getElementById("input-rad").value, 10);
+  if (document.getElementById("input-rad").value != '')
+    antennas[currentAntennaId].radius = parseInt(document.getElementById("input-rad").value, 10);
+  else antennas[currentAntennaId].radius = 0;
   showCoverage(antennas[currentAntennaId]);
 }
 
@@ -67,12 +128,48 @@ function showCoverage(antenna) {
   }).addTo(map);
 }
 
-function addAntenna() {
-  read();
-  console.log("add");
+function showFrequencies() {
+  for (var i = 0; i < antennas.length; ++i) {
+    if (antennas[i].popup == null)
+      addPopup(antennas[i]);
+    else
+      antennas[i].popup.openOn(map);
+  }
 }
 
-function removePrevCoverage(antenna){
+function deleteAntenna() {
+  if (currentAntennaId >= 0 && antennas.length > 0) {
+    if (antennas[currentAntennaId].marker != null) {
+      map.removeLayer(antennas[currentAntennaId].marker);
+    }
+    if (antennas[currentAntennaId].circle != null) {
+      map.removeLayer(antennas[currentAntennaId].circle);
+    }
+    if (antennas[currentAntennaId].popup != null) {
+      map.closePopup(antennas[currentAntennaId].popup);
+    }
+    antennas.splice(currentAntennaId, 1);
+    currentAntennaId--;
+  }
+}
+
+function hidePopup() {
+  map.closePopup();
+  for (var i = 0; i < antennas.length; ++i) {
+    if (antennas[i].popup != null) {
+      map.closePopup(antennas[i].popup);
+      antennas[i].popup = null;
+    }
+  }
+
+}
+
+
+function addAntenna() {
+  read();
+}
+
+function removePrevCoverage(antenna) {
   map.removeLayer(antenna.circle);
   antenna.circle = null;
 }
@@ -101,40 +198,40 @@ function calculateDist() {
     createTable();
   }
 }
-function assignFreq(){
+
+function assignFreq() {
 
 }
 
-function checkOverlap(){
+function checkOverlap() {
   var dist = 0;
   var rad_tot = 0;
-  var arrText='';
+  var arrText = '';
   for (var i = 0; i < antennas.length; i++) {
     Overlap_mat[i] = new Array(antennas.length);
   }
 
-// Loop to initialize 2D array elements.
+  // Loop to initialize 2D array elements.
   for (var i = 0; i < antennas.length; i++) {
-      for (var j = 0; j < antennas.length; j++) {
-        dist = getDistanceFromLatLonInKm(antennas[i].lat, antennas[i].lng, antennas[j].lat, antennas[j].lng);;
-        rad_tot = (antennas[i].radius + antennas[j].radius)/1000;
-        if(dist < rad_tot){
-          Overlap_mat[i][j] = 1;
-        }
-        else{
-          Overlap_mat[i][j] = 0;
-        }
+    for (var j = 0; j < antennas.length; j++) {
+      dist = getDistanceFromLatLonInKm(antennas[i].lat, antennas[i].lng, antennas[j].lat, antennas[j].lng);;
+      rad_tot = (antennas[i].radius + antennas[j].radius) / 1000;
+      if (dist < rad_tot) {
+        Overlap_mat[i][j] = 1;
+      } else {
+        Overlap_mat[i][j] = 0;
       }
+    }
   }
   console.log("Overlap Matrix: ");
-  for (i=0; i < Overlap_mat.length; i++) {
+  for (i = 0; i < Overlap_mat.length; i++) {
     for (j = 0; j < Overlap_mat[i].length; j++) {
-      arrText+=Overlap_mat[i][j]+' ';
+      arrText += Overlap_mat[i][j] + ' ';
     }
     console.log(arrText);
-    arrText='';
- }
-assignFreq();
+    arrText = '';
+  }
+  assignFreq();
 }
 
 function createTable() {
@@ -184,10 +281,12 @@ class Antenna {
   constructor(latlng) {
     this.lat = latlng.lat;
     this.lng = latlng.lng;
-    this.type = "undefined"
-    this.radius = 0
-    this.freq_num = 0
+    this.type = '';
+    this.radius = '';
+    this.freq_num = '';
     this.circle = null;
     this.marker = null;
+    this.frequencies = [1, 23, 22, 34] //used till real sequence will be calculated
+    this.popup = null
   }
 };
