@@ -7,15 +7,22 @@
     background: #fafafa;
 }
 .main-form{
-    width: 350px;
+    width: 40px;
+    height: 20px;
     margin: 0 auto;
     border: 0px solid #ddd;
     padding: 2rem;
     background: #ffffff;
 }
 .form-input{
-    background: #fafafa;
+    background: #ffffff;
     border: 1px solid #eeeeee;
+    padding: 12px;
+    width: 100%;
+}
+.form-result{
+    background: #ffffff;
+    border: 1px solid #000000;
     padding: 12px;
     width: 100%;
 }
