@@ -51,24 +51,34 @@
       <div class="sidebar-pane" id="home">
         
         <table class="popup-table">
+          
           <tr class="popup-table-row">
-            <th class="popup-table-header"> ID = </th>
+            <th class="popup-table-header">ID = </th>
             <td id="id-antenna" class="popup-table-data" type="number">0</td>
           </tr>
           <tr class="popup-table-row">
-            <th class="popup-table-header"> Latitude: </th>
+            <th class="popup-table-header">Latitude: </th>
             <td id="value-lat" class="popup-table-data" type="number">0</td>
           </tr>
 
           <tr class="popup-table-row">
-            <th class="popup-table-header"> Longitude: </th>
+            <th class="popup-table-header">Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
+         
       <tr class="popup-table-row">
-        <th class="popup-table-header"> Frequency number: </th>
-        <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required />
+        <th class="popup-table-header">Number of Frequencies: </th>
+        <td id="value-tot-freq" class="popup-table-data" type="number"><input id="input-tot-freq" class="popup-input" type="number" required/>
+    </div>
     </td>
     </tr>
+    <tr class="popup-table-row">
+      <th class="popup-table-header">Required frequencies: </th>
+      <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required/>
+  </div>
+  </td>
+  </tr>
+    
     <tr class="popup-table-row">
       <th class="popup-table-header"> Radius: </th>
       <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required" />
@@ -88,25 +98,25 @@
   </p>
   <br><br>
   <p>
-  <h2>Choose 2 Antennas to Display their Interference</h2>
+    <h2>Calculate the Interference</h2>
   </p>
 
+<form name="form1" id="form1" action="/action_page.php">
+Antenna 1: <select name="antenna1" id="first_antenna">
+  </select>
+  <br><br>
+Antenna 2: <select name="antenna2" id="second_antenna">
+  </select>
+  <br><br>
+  
+  <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate</button>
+</form>
+<br>
+<p>
+  <h3 >Result : </h3>
+</p>
+<p>
 
-  <form name="form1" id="form1" action="/action_page.php">
-    Antenna 1: <select name="antenna1" id="first_antenna">
-    </select>
-    <br><br>
-    Antenna 2: <select name="antenna2" id="second_antenna">
-    </select>
-    <br><br>
-
-    <button id="button-delete" type="button" class="floated" onclick="calculateDist()">Calculate Interference</button>
-  </form>
-  <br>
-  <p>
-  <h3>Result : </h3>
-  </p>
-  <p>
   <h3 id="res_interference"></h3>
   </p>
   </div>

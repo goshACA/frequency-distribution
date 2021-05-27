@@ -4,8 +4,6 @@ const TOTAL_FREQ = 60;
 const FREQ_PER_ANT = 6;
 const EPS = 0.000001;
 
-var currentAntennaId = 0;
-
 var antennas = [];
 var anteena_seq = [];
 var anteena_seq = [];
@@ -16,7 +14,7 @@ var inf_res = [];
 var firstAntennaSel = document.getElementById("first_antenna");
 var secondAntennaSel = document.getElementById("second_antenna");
 
-//inout fields
+//input fields
 var inpId = document.getElementById("id-antenna");
 var inpLat = document.getElementById("value-lat");
 var inpLng = document.getElementById("value-lon");
@@ -76,18 +74,19 @@ map.on('click', function(e) {
 
 function addPopup(antenna) {
   var count = 0;
-  var html = `<div class="wrap">` +
-    `<div class="form-result">` +
-    `Frequencies :`;
-  for (var i = 0; i < antenna.res.length; i++) {
-    html += `F` + antenna.res[i] + `, `;
-    if (count == 5) {
-      count = 0;
-      html += `\n`;
-    }
-  }
-  html += `</div>` +
-    `</div>`
+  var html = `<div class="wrap">`
+                +`<div class="form-result">`
+                +`ID = ` + antenna.id + `<br>`
+                  +`Frequencies :`;
+                  for(var i =0; i < antenna.res.length; i++){
+                    html += `F`+antenna.res[i]+`, `;
+                    if(count == 5){
+                      count = 0;
+                      html += `\n`;
+                    }
+                  }
+          html += `</div>`
+            +`</div>`
   antenna.popup = L.popup()
     .setLatLng([antenna.lat, antenna.lng])
     .setContent(html)
@@ -103,13 +102,19 @@ function showForm(e) {
   if (!(typeof antenna === 'undefined')) {
     sidebar.open('home');
     currentAntennaId = antennas.indexOf(antenna);
+    antenna.id = currentAntennaId;
     fill(antenna);
   } else {
     var antenna = new Antenna(e.latlng);
-    currentAntennaId = antennas.length;
+   /* currentAntennaId = antennas.length;
     antenna.id = antennas.length;
     firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
-    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
+    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);*/
+    antenna.id = currentAntennaId;
+    currentAntennaId = antennas.length - 1;
+    
+    firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId+1, currentAntennaId+1);
+    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId+1, currentAntennaId+1);
     antenna.marker = new L.marker(e.latlng, {
       icon: antennaIcon,
       contextmenu: true
@@ -150,6 +155,14 @@ function read() {
   if (antennas[currentAntennaId].circle != null)
     removePrevCoverage(antennas[currentAntennaId]);
   showCoverage(antennas[currentAntennaId]);
+  if (document.getElementById("input-tot-freq").value != '' && tot_freq >= 60)
+    tot_freq = parseInt(document.getElementById("input-tot-freq").value, 10);
+  else {
+    alert("total number of frequencies is lower than 60 !\n 60 will be used !");
+    document.getElementById("input-tot-freq").value = 60;
+
+  }
+    showCoverage(antennas[currentAntennaId]);
 }
 
 function showCoverage(antenna) {
@@ -169,6 +182,24 @@ function showFrequencies() {
   }
 }
 
+function initAntennas(){
+  var i, a1 = firstAntennaSel.options.length - 1, a2 = secondAntennaSel.options.length - 1;;
+   for(i = a1; i >= 0; i--) {
+    firstAntennaSel.remove(i);
+   }
+
+  for(i = a2; i >= 0; i--) {
+    secondAntennaSel.remove(i);
+  }
+
+  for(i = 0; i < antennas.length; i++){
+    antennas[i].id = i;
+    firstAntennaSel.options[i] = new Option(i, i);
+    secondAntennaSel.options[i] = new Option(i, i);
+    
+  }
+}
+
 function deleteAntenna() {
   if (currentAntennaId >= 0 && antennas.length > 0) {
     if (antennas[currentAntennaId].marker != null) {
@@ -181,11 +212,12 @@ function deleteAntenna() {
       map.closePopup(antennas[currentAntennaId].popup);
     }
     antennas.splice(currentAntennaId, 1);
-    firstAntennaSel.remove(currentAntennaId);
-    secondAntennaSel.remove(currentAntennaId);
+    initAntennas();
     currentAntennaId--;
   }
 }
+
+//get Interfeance between two antennas
 
 var antenna1 = document.getElementById("first_antenna");
 var antenna2 = document.getElementById("second_antenna");
@@ -205,7 +237,6 @@ function hidePopup() {
       antennas[i].popup = null;
     }
   }
-
 }
 
 function addAntenna() {
@@ -235,9 +266,16 @@ function deg2rad(deg) {
 }
 
 function calculateDist() {
-  if (antennas.length == 0) {
+  var length = antennas.length;
+  if (length == 0) {
     alert("No antennas present");
   } else {
+    for(var i = 0; i<length ; i++){
+      antennas[i].res = [];
+    }
+    Overlap_coff = [];
+    Overlap_mat = [];
+    inf_res = [];
     checkOverlap();
     alert("Frequencies Allocated");
     showFrequencies();
