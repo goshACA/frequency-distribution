@@ -8,8 +8,6 @@ var currentAntennaId = 0;
 var totFreq = 60;
 
 var antennas = [];
-var anteena_seq = [];
-var anteena_seq = [];
 var OverlapCoff = [];
 var OverlapMat = [];
 var inf_res = [];
@@ -74,20 +72,21 @@ map.on('click', function(e) {
 
 
 function addPopup(antenna) {
-  var count = 0;
-  var html = `<div class="wrap">`
-                +`<div class="form-result">`
-                +`ID = ` + antenna.id + `<br>`
-                  +`Frequencies :`;
-                  for(var i =0; i < antenna.res.length; i++){
-                    html += `F`+antenna.res[i]+`, `;
-                    if(count == 5){
-                      count = 0;
-                      html += `\n`;
-                    }
-                  }
-          html += `</div>`
-            +`</div>`
+  var html = `<div class="wrap">` +
+    `<div class="form-result">` +
+    `ID = ` + antenna.id + `<br>` +
+    `Frequencies :`;
+  for (var i = 0; i < antenna.res.length; i++) {
+    html += `F` + antenna.res[i] + `, `;
+  }
+  if (antenna.res.length > 0) {
+    html = html.substr(0, html.length - 2);
+  }
+  if (antenna.res.length == FREQ_PER_ANT - 1) {
+    html += '\n';
+  }
+  html += `</div>` +
+    `</div>`
   antenna.popup = L.popup()
     .setLatLng([antenna.lat, antenna.lng])
     .setContent(html)
@@ -108,10 +107,7 @@ function showForm(e) {
     fill(antenna);
   } else {
     var antenna = new Antenna(e.latlng);
-   /* currentAntennaId = antennas.length;
-    antenna.id = antennas.length;
-    firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
-    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);*/
+
     currentAntennaId = antennas.length;
     antenna.id = antennas.length;
 
@@ -147,11 +143,11 @@ function checkInputFields() {
     isValid = false;
   }
 
-  if (inpTotalFreq.value == '' || parseInt(inpTotalFreq.value, 10) < 60){
-  inpTotalFreq.setCustomValidity("Please enter a number >= 60");
-  inpTotalFreq.reportValidity();
-  isValid = false;
-}
+  if (inpTotalFreq.value == '' || parseInt(inpTotalFreq.value, 10) < 60) {
+    inpTotalFreq.setCustomValidity("Please enter a number >= 60");
+    inpTotalFreq.reportValidity();
+    isValid = false;
+  }
   return isValid;
 }
 
@@ -183,17 +179,18 @@ function showFrequencies() {
   }
 }
 
-function initAntennas(){
-  var i, a1 = firstAntennaSel.options.length - 1, a2 = secondAntennaSel.options.length - 1;;
-   for(i = a1; i >= 0; i--) {
+function initAntennas() {
+  var i, a1 = firstAntennaSel.options.length - 1,
+    a2 = secondAntennaSel.options.length - 1;;
+  for (i = a1; i >= 0; i--) {
     firstAntennaSel.remove(i);
-   }
+  }
 
-  for(i = a2; i >= 0; i--) {
+  for (i = a2; i >= 0; i--) {
     secondAntennaSel.remove(i);
   }
 
-  for(i = 0; i < antennas.length; i++){
+  for (i = 0; i < antennas.length; i++) {
     antennas[i].id = i;
     firstAntennaSel.options[i] = new Option(i, i);
     secondAntennaSel.options[i] = new Option(i, i);
@@ -227,10 +224,10 @@ var result = document.getElementById("res_interference");
 function getInf() {
   var ant1 = antenna1.value;
   var ant2 = antenna2.value;
-  if(typeof inf_res[ant1][ant2] === 'undefined')
-  result.innerHTML = 'There is no interference';
+  if (typeof inf_res[ant1][ant2] === 'undefined')
+    result.innerHTML = 'There is no interference';
   else
-  result.innerHTML = inf_res[ant1][ant2];
+    result.innerHTML = inf_res[ant1][ant2];
 }
 
 function hidePopup() {
@@ -274,7 +271,7 @@ function calculateDist() {
   if (length == 0) {
     alert("No antennas present");
   } else {
-    for(var i = 0; i<length ; i++){
+    for (var i = 0; i < length; i++) {
       antennas[i].res = [];
     }
     OverlapCoff = [];
