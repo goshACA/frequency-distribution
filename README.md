@@ -1,1 +1,1 @@
-# frequency-distribution
+# Manual ⌛

@@ -307,7 +307,7 @@ function calculateInt(mat) {
         dist = Number(getDistanceFromLatLonInKm(antennas[i].lat, antennas[i].lng, antennas[j].lat, antennas[j].lng));
         console.log(" Distance between anteenas  = ")
         console.log(dist)
-        tot_inf = (1 / (EPS + dist_abs)) * (1 / (EPS + dist));
+        tot_inf = (OverlapCoff[i][j] / (EPS + dist_abs));
         console.log(" Total interference between anteenas  = ")
         console.log(tot_inf)
         inf_res[i][j] = Number(tot_inf);
