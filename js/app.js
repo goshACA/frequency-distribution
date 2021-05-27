@@ -86,15 +86,6 @@ function showForm(e) {
       iconAnchor: [25, 30]
     });
     antenna.marker = L.marker(e.latlng, {icon: icon}).on('click', showForm).addTo(map);
-    /* new L.marker(e.latlng, {
-      contextmenu: true,
-      contextmenuItems: [{
-        text: 'Circle 1',
-        callback: function() {
-          alert("tctc");
-        }
-      }]
-    }).on('click', showForm).addTo(map);*/
     antennas.push(antenna);
   }
 }

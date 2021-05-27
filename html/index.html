@@ -43,7 +43,7 @@
     <div class="sidebar-tabs">
       <ul role="tablist">
         <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
-        <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+        <!-- <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li> -->
       </ul>
 
       <ul role="tablist">
@@ -60,16 +60,19 @@
         </h1>
         <table class="popup-table">
           <tr class="popup-table-row">
+            <th class="popup-table-header"> ID = </th>
+            <td id="id-antenna" class="popup-table-data" type="number">0</td>
+          </tr>
+          <tr class="popup-table-row">
             <th class="popup-table-header"> Latitude: </th>
             <td id="value-lat" class="popup-table-data" type="number">0</td>
           </tr>
+
           <tr class="popup-table-row">
             <th class="popup-table-header"> Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
       </div>
-      </td>
-      </tr>
       <tr class="popup-table-row">
         <th class="popup-table-header"> Frequency number: </th>
         <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required />
@@ -93,6 +96,32 @@
   <p>
     <button id="button-delete" type="button" class="floated" onclick="deleteAntenna()">Delete Antenna </button>
   </p>
+  <br><br>
+  <p>
+    <h2>Choose 2 Antennas to Display their Interference</h2>
+  </p>
+
+
+<form name="form1" id="form1" action="/action_page.php">
+Antenna 1: <select name="antenna1" id="first_antenna">
+  </select>
+  <br><br>
+Antenna 2: <select name="antenna2" id="second_antenna">
+  </select>
+  <br><br>
+
+  <p>
+    <h2>Choose 2 Antennas to Display their Interference</h2>
+  </p>
+  <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate Interference</button>
+</form>
+<br>
+<p>
+  <h3 >Result : </h3>
+</p>
+<p>
+  <h3 id="res_interference"></h3>
+</p>
   </div>
 
   <div class="sidebar-pane" id="profile">
