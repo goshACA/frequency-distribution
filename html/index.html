@@ -49,9 +49,11 @@
     <!-- Home tab -->
     <div class="sidebar-content">
       <div class="sidebar-pane" id="home">
-        
+        <h1 class="sidebar-header">
+                  Frequeny Distributor
+                  <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
         <table class="popup-table">
-          
           <tr class="popup-table-row">
             <th class="popup-table-header">ID = </th>
             <td id="id-antenna" class="popup-table-data" type="number">0</td>
@@ -65,7 +67,7 @@
             <th class="popup-table-header">Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
-         
+
       <tr class="popup-table-row">
         <th class="popup-table-header">Number of Frequencies: </th>
         <td id="value-tot-freq" class="popup-table-data" type="number"><input id="input-tot-freq" class="popup-input" type="number" required/>
@@ -78,7 +80,7 @@
   </div>
   </td>
   </tr>
-    
+
     <tr class="popup-table-row">
       <th class="popup-table-header"> Radius: </th>
       <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required" />
@@ -97,6 +99,12 @@
     <button id="button-delete" type="button" class="floated" onclick="deleteAntenna()">Delete Antenna </button>
   </p>
   <br><br>
+
+  <p>
+    <h2>Assign Frequencies</h2>
+    <button id="button-delete" type="button" onclick="calculateDist()" style="width: 80%;">Assign</button>
+  </p>
+
   <p>
     <h2>Calculate the Interference</h2>
   </p>
@@ -108,7 +116,7 @@ Antenna 1: <select name="antenna1" id="first_antenna">
 Antenna 2: <select name="antenna2" id="second_antenna">
   </select>
   <br><br>
-  
+
   <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate</button>
 </form>
 <br>

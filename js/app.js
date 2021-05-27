@@ -1,14 +1,17 @@
 //Global vars and constants:
 const COORD_PRECISION = 5;
-const TOTAL_FREQ = 60;
 const FREQ_PER_ANT = 6;
 const EPS = 0.000001;
+
+var currentAntennaId = 0;
+
+var totFreq = 60;
 
 var antennas = [];
 var anteena_seq = [];
 var anteena_seq = [];
-var Overlap_coff = [];
-var Overlap_mat = [];
+var OverlapCoff = [];
+var OverlapMat = [];
 var inf_res = [];
 
 var firstAntennaSel = document.getElementById("first_antenna");
@@ -19,6 +22,7 @@ var inpId = document.getElementById("id-antenna");
 var inpLat = document.getElementById("value-lat");
 var inpLng = document.getElementById("value-lon");
 var inpFreq = document.getElementById("input-freq");
+var inpTotalFreq = document.getElementById("input-tot-freq");
 var inpRadius = document.getElementById("input-rad");
 var inpColor = document.getElementById("color");
 
@@ -62,9 +66,6 @@ var toggle = L.easyButton({
   }]
 });
 toggle.addTo(map);
-L.easyButton('&#x00023', function() {
-  showFrequencies();
-}).addTo(map);
 
 //click on map to add an antenna
 map.on('click', function(e) {
@@ -98,6 +99,7 @@ function addPopup(antenna) {
 function showForm(e) {
   sidebar.close();
   hidePopup();
+  toggle.state('add-markers');
   var antenna = antennas.find(o => o.lat.toFixed(COORD_PRECISION) == e.latlng.lat.toFixed(COORD_PRECISION) && o.lng.toFixed(COORD_PRECISION) == e.latlng.lng.toFixed(COORD_PRECISION));
   if (!(typeof antenna === 'undefined')) {
     sidebar.open('home');
@@ -110,11 +112,11 @@ function showForm(e) {
     antenna.id = antennas.length;
     firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
     secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);*/
-    antenna.id = currentAntennaId;
-    currentAntennaId = antennas.length - 1;
-    
-    firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId+1, currentAntennaId+1);
-    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId+1, currentAntennaId+1);
+    currentAntennaId = antennas.length;
+    antenna.id = antennas.length;
+
+    firstAntennaSel.options[firstAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
+    secondAntennaSel.options[secondAntennaSel.options.length] = new Option(currentAntennaId, currentAntennaId);
     antenna.marker = new L.marker(e.latlng, {
       icon: antennaIcon,
       contextmenu: true
@@ -144,25 +146,24 @@ function checkInputFields() {
     inpFreq.reportValidity();
     isValid = false;
   }
+
+  if (inpTotalFreq.value == '' || parseInt(inpTotalFreq.value, 10) < 60){
+  inpTotalFreq.setCustomValidity("Please enter a number >= 60");
+  inpTotalFreq.reportValidity();
+  isValid = false;
+}
   return isValid;
 }
 
 function read() {
   if (!checkInputFields()) return;
   antennas[currentAntennaId].freq_num = parseInt(inpFreq.value, 10);
+  totFreq = parseInt(inpTotalFreq.value, 10);
   antennas[currentAntennaId].radius = parseInt(inpRadius.value, 10);
   antennas[currentAntennaId].color = inpColor.value;
   if (antennas[currentAntennaId].circle != null)
     removePrevCoverage(antennas[currentAntennaId]);
   showCoverage(antennas[currentAntennaId]);
-  if (document.getElementById("input-tot-freq").value != '' && tot_freq >= 60)
-    tot_freq = parseInt(document.getElementById("input-tot-freq").value, 10);
-  else {
-    alert("total number of frequencies is lower than 60 !\n 60 will be used !");
-    document.getElementById("input-tot-freq").value = 60;
-
-  }
-    showCoverage(antennas[currentAntennaId]);
 }
 
 function showCoverage(antenna) {
@@ -196,7 +197,7 @@ function initAntennas(){
     antennas[i].id = i;
     firstAntennaSel.options[i] = new Option(i, i);
     secondAntennaSel.options[i] = new Option(i, i);
-    
+
   }
 }
 
@@ -273,8 +274,8 @@ function calculateDist() {
     for(var i = 0; i<length ; i++){
       antennas[i].res = [];
     }
-    Overlap_coff = [];
-    Overlap_mat = [];
+    OverlapCoff = [];
+    OverlapMat = [];
     inf_res = [];
     checkOverlap();
     alert("Frequencies Allocated");
@@ -326,9 +327,9 @@ function assignFreq(seq) {
   var f_num = 0;
   for (var i = 0; i < seq.length; i++) {
     used_freq = [];
-    for (var j = 0; j < Overlap_mat.length; j++) {
+    for (var j = 0; j < OverlapMat.length; j++) {
       console.log('overlap :');
-      if (Overlap_mat[seq[i]][j] == 1) {
+      if (OverlapMat[seq[i]][j] == 1) {
         console.log('overlap inside');
         for (var k = 0; k < antennas[j].res.length; k++) {
           if (!used_freq.includes(antennas[j].res[k])) {
@@ -348,10 +349,10 @@ function assignFreq(seq) {
     if (!f_num == 0) {
       while (!done) {
         frequency = start_num;
-        while (frequency <= TOTAL_FREQ && !satisfied) {
+        while (frequency <= totFreq && !satisfied) {
           if (used_freq.includes(frequency)) {
             frequency += 3;
-            if (frequency > TOTAL_FREQ) {
+            if (frequency > totFreq) {
               if (start_num == 3)
                 done = true;
               else
@@ -381,7 +382,7 @@ function printResult() {
     console.log("id " + i);
     console.log(antennas[i].res);
   }
-  calculateInt(Overlap_mat);
+  calculateInt(OverlapMat);
   console.log('Interfereance matrix =');
   console.log(inf_res);
 
@@ -394,8 +395,8 @@ function checkOverlap() {
   var s = 0;
   var sum = [];
   for (var i = 0; i < antennas.length; i++) {
-    Overlap_coff[i] = new Array(antennas.length);
-    Overlap_mat[i] = new Array(antennas.length);
+    OverlapCoff[i] = new Array(antennas.length);
+    OverlapMat[i] = new Array(antennas.length);
 
   }
 
@@ -406,24 +407,24 @@ function checkOverlap() {
       rad_tot = (antennas[i].radius + antennas[j].radius) / 1000;
       if (dist < rad_tot) {
         if (dist == 0) {
-          Overlap_coff[i][j] = 0;
-          Overlap_mat[i][j] = 0;
+          OverlapCoff[i][j] = 0;
+          OverlapMat[i][j] = 0;
         } else {
-          Overlap_coff[i][j] = parseFloat(Math.abs(rad_tot - dist).toFixed(COORD_PRECISION));
-          Overlap_mat[i][j] = 1;
+          OverlapCoff[i][j] = parseFloat(Math.abs(rad_tot - dist).toFixed(COORD_PRECISION));
+          OverlapMat[i][j] = 1;
         }
 
       } else {
-        Overlap_coff[i][j] = 0;
-        Overlap_mat[i][j] = 0;
+        OverlapCoff[i][j] = 0;
+        OverlapMat[i][j] = 0;
       }
     }
   }
   console.log("Overlap Coef: ");
-  for (i = 0; i < Overlap_coff.length; i++) {
-    for (j = 0; j < Overlap_coff[i].length; j++) {
-      s += parseFloat(Overlap_coff[i][j]);
-      arrText += Overlap_coff[i][j] + ' ';
+  for (i = 0; i < OverlapCoff.length; i++) {
+    for (j = 0; j < OverlapCoff[i].length; j++) {
+      s += parseFloat(OverlapCoff[i][j]);
+      arrText += OverlapCoff[i][j] + ' ';
 
     }
     sum.push(s);
@@ -433,7 +434,7 @@ function checkOverlap() {
   }
   console.log("Overlap mat")
 
-  console.log(Overlap_mat)
+  console.log(OverlapMat)
   var sum_sort = sum.slice();
   var sum_seq = [];
   var id = 0;
@@ -451,49 +452,6 @@ function checkOverlap() {
   console.log(sum_seq);
   assignFreq(sum_seq);
 }
-
-/*
-function createTable() {
-  var num_super = 1;
-  var num_rows = 3;
-  var num_cols = 3;
-  var sum_dist = [];
-  var sum_sort = [];
-  var sum;
-  var dist = 0;
-  var tbody = '';
-  var output = '';
-  var colStart = num_cols / num_super;
-  for (var i = 0; i < num_super; i++) {
-    var theader = '<div><table border="1">\n';
-    for (var u = 0; u < antennas.length; u++) {
-      sum = 0;
-      tbody += '<tr>';
-      for (var j = 0; j < antennas.length; j++) {
-        tbody += '<td>';
-        dist = getDistanceFromLatLonInKm(antennas[u].lat, antennas[u].lng, antennas[j].lat, antennas[j].lng);;
-        tbody += dist;
-        //console.log("Dist between: " + u + ", " + j + " = " + dist + '\n');
-        tbody += '</td>'
-        sum += dist;
-      }
-      sum_dist[u] = sum;
-      //console.log("sum of distance from anteena: " + u + ", is: " + sum_dist[u]);
-      tbody += '</tr>\n';
-    }
-    var tfooter = '</table></div>';
-    document.getElementById('res_table').innerHTML = theader + tbody + tfooter;
-  }
-  sum_sort = sum_dist.slice();
-  sum_sort.sort((a, b) => a - b)
-  console.log(sum_sort);
-  for (var k = 0; k < antennas.length; k++) {
-    anteena_seq.push(sum_dist.indexOf(sum_sort[k]));
-  }
-  console.log(anteena_seq);
-  checkOverlap();
-}
-*/
 
 class Antenna {
   constructor(latlng) {
