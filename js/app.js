@@ -227,6 +227,9 @@ var result = document.getElementById("res_interference");
 function getInf() {
   var ant1 = antenna1.value;
   var ant2 = antenna2.value;
+  if(typeof inf_res[ant1][ant2] === 'undefined')
+  result.innerHTML = 'There is no interference';
+  else
   result.innerHTML = inf_res[ant1][ant2];
 }
 
@@ -309,7 +312,7 @@ function calculateInt(mat) {
         console.log(dist)
         tot_inf = (OverlapCoff[i][j] / (EPS + dist_abs));
         console.log(" Total interference between anteenas  = ")
-        console.log(tot_inf)
+        console.log(tot_inf);
         inf_res[i][j] = Number(tot_inf);
         dist_abs = 0;
       }
