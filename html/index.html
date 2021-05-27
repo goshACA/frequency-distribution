@@ -59,31 +59,34 @@
           <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
         </h1>
         <table class="popup-table">
+          
           <tr class="popup-table-row">
-            <th class="popup-table-header"> ID = </th>
+            <th class="popup-table-header">ID = </th>
             <td id="id-antenna" class="popup-table-data" type="number">0</td>
           </tr>
           <tr class="popup-table-row">
-            <th class="popup-table-header"> Latitude: </th>
+            <th class="popup-table-header">Latitude: </th>
             <td id="value-lat" class="popup-table-data" type="number">0</td>
           </tr>
           
           <tr class="popup-table-row">
-            <th class="popup-table-header"> Longitude: </th>
+            <th class="popup-table-header">Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
-          <tr class="popup-table-row">
-            <th class="popup-table-header"> Antenna type: </th>
-            <td id="value-type" class="popup-table-data" type="number"><input id="input-type" class="popup-input" type="text" />
-        </div>
-      </td>
-      </tr>
+         
       <tr class="popup-table-row">
-        <th class="popup-table-header"> Frequency number: </th>
-        <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required/>
+        <th class="popup-table-header">Number of Frequencies: </th>
+        <td id="value-tot-freq" class="popup-table-data" type="number"><input id="input-tot-freq" class="popup-input" type="number" required/>
     </div>
     </td>
     </tr>
+    <tr class="popup-table-row">
+      <th class="popup-table-header">Required frequencies: </th>
+      <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required/>
+  </div>
+  </td>
+  </tr>
+    
     <tr class="popup-table-row">
       <th class="popup-table-header"> Radius: </th>
       <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required"/>
@@ -99,7 +102,7 @@
   </p>
   <br><br>
   <p>
-    <h2>Choose 2 Antennas to Display their Interference</h2>
+    <h2>Calculate the Interference</h2>
   </p>
   
 
@@ -111,10 +114,7 @@ Antenna 2: <select name="antenna2" id="second_antenna">
   </select>
   <br><br>
   
-  <p>
-    <h2>Choose 2 Antennas to Display their Interference</h2>
-  </p>
-  <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate Interference</button>
+  <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate</button>
 </form>
 <br>
 <p>
