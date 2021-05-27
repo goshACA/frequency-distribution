@@ -67,28 +67,29 @@
             <th class="popup-table-header"> Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
-          <tr class="popup-table-row">
-            <th class="popup-table-header"> Antenna type: </th>
-            <td id="value-type" class="popup-table-data" type="number"><input id="input-type" class="popup-input" type="text" />
       </div>
       </td>
       </tr>
       <tr class="popup-table-row">
         <th class="popup-table-header"> Frequency number: </th>
-        <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required/>
+        <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required />
     </div>
     </td>
     </tr>
     <tr class="popup-table-row">
       <th class="popup-table-header"> Radius: </th>
-      <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required"/>
+      <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required" />
   </div>
   </td>
   </tr>
+  <tr class="popup-table-row">
+    <th class="popup-table-header"><label for="favcolor">Color:</label></th>
+  <br><td id="value-rad" class="popup-table-data"><input type="color" id="color" value="#0022FF"><br></td>
+  </tr>
   </table>
   <p>
-  <button id="button-submit" type="button" class="floated" onclick="addAntenna()">Save Antenna </button>
-</p>
+    <button id="button-submit" type="button" class="floated" onclick="addAntenna()">Save Antenna </button>
+  </p>
   <p>
     <button id="button-delete" type="button" class="floated" onclick="deleteAntenna()">Delete Antenna </button>
   </p>
@@ -104,6 +105,9 @@
 
   <div class="sidebar-pane" id="settings">
     <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+    <label for="favcolor">Select your favorite color:</label>
+    <input type="color" id="favcolor" name="favcolor" value="0022FF"><br><br>
+    <input type="submit">
     <h4 id="res_table" />
   </div>
   </div>

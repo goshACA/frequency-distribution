@@ -35,10 +35,10 @@ L.easyButton('&#x00023', function() {
   calculateDist();
 }).addTo(map);
 
-
 map.on('click', function(e) {
   showForm(e);
 });
+
 
 function addMarker(e) {
   sidebar.close();
@@ -80,7 +80,13 @@ function showForm(e) {
     document.getElementById("value-lat").textContent = e.latlng.lat.toFixed(coordPrecision);
     document.getElementById("value-lon").textContent = e.latlng.lng.toFixed(coordPrecision);
     currentAntennaId = antennas.length - 1;
-    antenna.marker = new L.marker(e.latlng, {
+    var icon = L.icon ({
+      iconUrl: 'icon.png',
+      iconSize: [50, 50],
+      iconAnchor: [25, 30]
+    });
+    antenna.marker = L.marker(e.latlng, {icon: icon}).on('click', showForm).addTo(map);
+    /* new L.marker(e.latlng, {
       contextmenu: true,
       contextmenuItems: [{
         text: 'Circle 1',
@@ -88,7 +94,7 @@ function showForm(e) {
           alert("tctc");
         }
       }]
-    }).on('click', showForm).addTo(map);
+    }).on('click', showForm).addTo(map);*/
     antennas.push(antenna);
   }
 }
@@ -96,11 +102,10 @@ function showForm(e) {
 function fill(antenna) {
   document.getElementById("value-lat").textContent = antenna.lat;
   document.getElementById("value-lon").textContent = antenna.lng;
-  if (antenna.type != '')
-    document.getElementById("input-type").value = antenna.type;
   if (antenna.freq_num != '')
     document.getElementById("input-freq").value = antenna.freq_num;
   document.getElementById("input-rad").value = antenna.radius;
+  document.getElementById("color").value = antenna.color;
 }
 
 function checkInputFields() {
@@ -108,8 +113,8 @@ function checkInputFields() {
 }
 
 function read() {
-  antennas[currentAntennaId].type = document.getElementById("input-type").value;
   antennas[currentAntennaId].freq_num = parseInt(document.getElementById("input-freq").value, 10);
+  antennas[currentAntennaId].color = document.getElementById("color").value;
   if (antennas[currentAntennaId].circle != null) {
     removePrevCoverage(antennas[currentAntennaId]);
   }
@@ -121,8 +126,7 @@ function read() {
 
 function showCoverage(antenna) {
   antenna.circle = L.circle([antenna.lat, antenna.lng], {
-    color: 'blue',
-    fillColor: '#0022FF',
+    fillColor: antenna.color,
     fillOpacity: 0.25,
     radius: antenna.radius
   }).addTo(map);
@@ -281,12 +285,12 @@ class Antenna {
   constructor(latlng) {
     this.lat = latlng.lat;
     this.lng = latlng.lng;
-    this.type = '';
     this.radius = '';
     this.freq_num = '';
     this.circle = null;
     this.marker = null;
     this.frequencies = [1, 23, 22, 34] //used till real sequence will be calculated
     this.popup = null
+    this.color = '#0022FF'
   }
 };
