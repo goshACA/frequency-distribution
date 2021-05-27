@@ -43,21 +43,13 @@
     <div class="sidebar-tabs">
       <ul role="tablist">
         <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
-        <!-- <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li> -->
-      </ul>
-
-      <ul role="tablist">
-
       </ul>
     </div>
 
-    <!-- Tab panes -->
+    <!-- Home tab -->
     <div class="sidebar-content">
       <div class="sidebar-pane" id="home">
-        <h1 class="sidebar-header">
-          Antennas
-          <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-        </h1>
+        
         <table class="popup-table">
           <tr class="popup-table-row">
             <th class="popup-table-header"> ID = </th>
@@ -72,22 +64,20 @@
             <th class="popup-table-header"> Longitude: </th>
             <td id="value-lon" class="popup-table-data" type="number"></td>
           </tr>
-      </div>
       <tr class="popup-table-row">
         <th class="popup-table-header"> Frequency number: </th>
         <td id="value-freq" class="popup-table-data" type="number"><input id="input-freq" class="popup-input" type="number" required />
-    </div>
     </td>
     </tr>
     <tr class="popup-table-row">
       <th class="popup-table-header"> Radius: </th>
       <td id="value-rad" class="popup-table-data" type="number"><input id="input-rad" class="popup-input" type="number" required="required" />
-  </div>
   </td>
   </tr>
   <tr class="popup-table-row">
     <th class="popup-table-header"><label for="favcolor">Color:</label></th>
-  <br><td id="value-rad" class="popup-table-data"><input type="color" id="color" value="#0022FF"><br></td>
+    <br>
+    <td id="value-rad" class="popup-table-data"><input type="color" id="color" value="#00a8ff"><br></td>
   </tr>
   </table>
   <p>
@@ -98,30 +88,27 @@
   </p>
   <br><br>
   <p>
-    <h2>Choose 2 Antennas to Display their Interference</h2>
+  <h2>Choose 2 Antennas to Display their Interference</h2>
   </p>
 
 
-<form name="form1" id="form1" action="/action_page.php">
-Antenna 1: <select name="antenna1" id="first_antenna">
-  </select>
-  <br><br>
-Antenna 2: <select name="antenna2" id="second_antenna">
-  </select>
-  <br><br>
+  <form name="form1" id="form1" action="/action_page.php">
+    Antenna 1: <select name="antenna1" id="first_antenna">
+    </select>
+    <br><br>
+    Antenna 2: <select name="antenna2" id="second_antenna">
+    </select>
+    <br><br>
 
+    <button id="button-delete" type="button" class="floated" onclick="calculateDist()">Calculate Interference</button>
+  </form>
+  <br>
   <p>
-    <h2>Choose 2 Antennas to Display their Interference</h2>
+  <h3>Result : </h3>
   </p>
-  <button id="button-delete" type="button" class="floated" onclick="getInf()" >Calculate Interference</button>
-</form>
-<br>
-<p>
-  <h3 >Result : </h3>
-</p>
-<p>
+  <p>
   <h3 id="res_interference"></h3>
-</p>
+  </p>
   </div>
 
   <div class="sidebar-pane" id="profile">
@@ -149,6 +136,9 @@ Antenna 2: <select name="antenna2" id="second_antenna">
   <script src="../js/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
   <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+  <!--initialize geosearch -->
+  <link  href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css" rel="stylesheet" />
+        <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
   <script src="../js/app.js"></script>
   <script src="https://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
 
